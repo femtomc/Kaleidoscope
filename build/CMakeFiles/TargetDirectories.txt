@@ -1,0 +1,6 @@
+/Users/mccoybecker/Dev/Kaleidoscope/build/CMakeFiles/rebuild_cache.dir
+/Users/mccoybecker/Dev/Kaleidoscope/build/CMakeFiles/edit_cache.dir
+/Users/mccoybecker/Dev/Kaleidoscope/build/CMakeFiles/Kaleidoscope.dir
+/Users/mccoybecker/Dev/Kaleidoscope/build/lib/CMakeFiles/rebuild_cache.dir
+/Users/mccoybecker/Dev/Kaleidoscope/build/lib/CMakeFiles/edit_cache.dir
+/Users/mccoybecker/Dev/Kaleidoscope/build/lib/CMakeFiles/lib.dir

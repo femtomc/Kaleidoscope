@@ -1,8 +1,10 @@
-/////
-///// Abstract syntax tree
-/////
+#include <string>
+#include <cstdlib>
+#include <cstdio>
+#include <iostream>
+#include <vector>
 
-namespace {
+namespace ast {
 
     /// ExprAST - Base class for all expression nodes.
     class ExprAST {
