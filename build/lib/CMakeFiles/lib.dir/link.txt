@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc liblib.a CMakeFiles/lib.dir/lexer.cpp.o CMakeFiles/lib.dir/parser.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib liblib.a

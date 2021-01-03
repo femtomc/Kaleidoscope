@@ -4,7 +4,8 @@ project(Kaleidoscope VERSION 1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_subdirectory(lib)
+include_directories(include)
+
 add_executable(Kaleidoscope src/main.cpp)
-target_include_directories(Kaleidoscope PUBLIC lib)
+add_subdirectory(lib)
 target_link_libraries(Kaleidoscope PUBLIC lib)

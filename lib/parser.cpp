@@ -239,7 +239,7 @@ static void HandleTopLevelExpression() {
 /// top ::= definition | external | expression | ';'
 void MainLoop() {
     while (true) {
-        fprintf(stderr, "ready> ");
+        fprintf(stderr, "(Kaleidoscope) > ");
         switch (CurTok) {
             case tok_eof:
                 return;
