@@ -10,6 +10,7 @@ namespace ast {
     class ExprAST {
         public:
             virtual ~ExprAST() = default;
+            virtual Value *codegen() = 0;
     };
 
     /// NumberExprAST - Expression class for numeric literals like "1.0".
@@ -18,6 +19,7 @@ namespace ast {
 
         public:
         NumberExprAST(double Val) : Val(Val) {}
+        virtual Value *codegen();
     };
 
     /// VariableExprAST - Expression class for referencing a variable, like "a".
@@ -26,6 +28,7 @@ namespace ast {
 
         public:
         VariableExprAST(const std::string &Name) : Name(Name) {}
+        virtual Value *codegen();
     };
 
     /// BinaryExprAST - Expression class for a binary operator.
@@ -37,6 +40,7 @@ namespace ast {
         BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS,
                 std::unique_ptr<ExprAST> RHS)
             : Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+        virtual Value *codegen();
     };
 
     /// CallExprAST - Expression class for function calls.
@@ -48,6 +52,7 @@ namespace ast {
         CallExprAST(const std::string &Callee,
                 std::vector<std::unique_ptr<ExprAST>> Args)
             : Callee(Callee), Args(std::move(Args)) {}
+        virtual Value *codegen();
     };
 
     /// PrototypeAST - This class represents the "prototype" for a function,
@@ -62,6 +67,7 @@ namespace ast {
             : Name(Name), Args(std::move(Args)) {}
 
         const std::string &getName() const { return Name; }
+        virtual Value *codegen();
     };
 
     /// FunctionAST - This class represents a function definition itself.
@@ -73,6 +79,7 @@ namespace ast {
         FunctionAST(std::unique_ptr<PrototypeAST> Proto,
                 std::unique_ptr<ExprAST> Body)
             : Proto(std::move(Proto)), Body(std::move(Body)) {}
+        virtual Value *codegen();
     };
 
 } // end anonymous namespace

@@ -1,5 +1,5 @@
-#ifndef LIB_TOKEN_H
-#define LIB_TOKEN_H
+#ifndef INCLUDE_TOKEN_H
+#define INCLUDE_TOKEN_H
 
 #include <string>
 
