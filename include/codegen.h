@@ -13,14 +13,19 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
 
-static LLVMContext Ctx;
-static IRBuilder<> Builder(Ctx);
-static std::unique_ptr<Module> Mod;
-static std::map<std::string, Value *> NamedValues;
+#include "ast.h"
+#include "parser.h"
 
-Value *LogErrorV(const char *Str) {
+static std::unique_ptr<llvm::LLVMContext> Ctx;
+static std::unique_ptr<llvm::IRBuilder<>> Builder;
+static std::unique_ptr<llvm::Module> Mod;
+static std::map<std::string, llvm::Value *> NamedValues;
+
+static llvm::Value *LogErrorV(const char *Str) {
     LogError(Str);
     return nullptr;
 }
+
+void initializeModule();
 
 #endif

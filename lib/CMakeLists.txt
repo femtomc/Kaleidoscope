@@ -1,1 +1,1 @@
-add_library(lib lexer.cpp parser.cpp)
+add_library(lib lexer.cpp parser.cpp codegen.cpp)

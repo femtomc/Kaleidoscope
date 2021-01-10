@@ -14,6 +14,10 @@ int getNextToken();
 /// defined.
 extern std::map<char, int> BinopPrecedence;
 
+/// LogError* - These are little helper functions for error handling.
+std::unique_ptr<ExprAST> LogError(const char *Str);
+std::unique_ptr<PrototypeAST> LogErrorP(const char *Str);
+
 /// GetTokPrecedence - Get the precedence of the pending binary operator token.
 int GetTokPrecedence();
 void MainLoop();

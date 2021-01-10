@@ -12,7 +12,7 @@ int main() {
     BinopPrecedence['*'] = 40; // highest.
 
     // Prime the first token.
-    fprintf(stderr, "(Kaleidoscope) > ");
+    fprintf(stderr, "Welcome to Kaleidoscope!\n");
     getNextToken();
 
     // Create module to hold IR code.
@@ -22,7 +22,7 @@ int main() {
     MainLoop();
    
     // Dump generated code.
-    Mod->print(errs(), nullptr);
+    Mod->print(llvm::errs(), nullptr);
 
     return 0;
 }

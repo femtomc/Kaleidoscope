@@ -211,8 +211,8 @@ static std::unique_ptr<PrototypeAST> ParseExtern() {
 static void HandleDefinition() {
     if (auto FnAST = ParseDefinition()) {
         if (auto *FnIR = FnAST->codegen()) {
-            fprintf(stderr, "Read function definition:");
-            FnIR->print(errs());
+            fprintf(stderr, "Read function definition:\n");
+            FnIR->print(llvm::errs());
             fprintf(stderr, "\n");
         }
     } else {
@@ -224,8 +224,8 @@ static void HandleDefinition() {
 static void HandleExtern() {
     if (auto ProtoAST = ParseExtern()) {
         if (auto *FnIR = ProtoAST->codegen()) {
-            fprintf(stderr, "Read extern: ");
-            FnIR->print(errs());
+            fprintf(stderr, "Read extern:\n");
+            FnIR->print(llvm::errs());
             fprintf(stderr, "\n");
         }
     } else {
@@ -238,8 +238,8 @@ static void HandleTopLevelExpression() {
     // Evaluate a top-level expression into an anonymous function.
     if (auto FnAST = ParseTopLevelExpr()) {
         if (auto *FnIR = FnAST->codegen()) {
-            fprintf(stderr, "Read top-level expression:");
-            FnIR->print(errs());
+            fprintf(stderr, "Read top-level expression:\n");
+            FnIR->print(llvm::errs());
             fprintf(stderr, "\n");
             FnIR->eraseFromParent();
         }

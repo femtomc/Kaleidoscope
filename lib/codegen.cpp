@@ -1,19 +1,18 @@
 #include "codegen.h"
-#include "ast.h"
 
-Value *NumberExprAST::codegen() {
-    return ConstantFP::get(Ctx, APFloat(Val));
+llvm::Value *ast::NumberExprAST::codegen() {
+    return llvm::ConstantFP::get(*Ctx, llvm::APFloat(Val));
 }
 
-Value *VariableExprAST::codegen() {
-    Value *V = NamedValues[Name];
+llvm::Value *ast::VariableExprAST::codegen() {
+    llvm::Value *V = NamedValues[Name];
     if (!V) LogErrorV("Unknown variable name.");
     return V;
 }
 
-Value *BinaryExprAST::codegen() {
-    Value *L = LHS->codegen();
-    Value *R = RHS->codegen();
+llvm::Value *ast::BinaryExprAST::codegen() {
+    llvm::Value *L = LHS->codegen();
+    llvm::Value *R = RHS->codegen();
     if (!L || !R) return nullptr;
     switch (Op) {
         case '+':
@@ -24,15 +23,15 @@ Value *BinaryExprAST::codegen() {
             return Builder->CreateFMul(L, R, "multmp");
         case '<':
             L = Builder->CreateFCmpULT(L, R, "cmptmp");
-            return Builder->CreateUIToFP(L, Type::getDoubleTy(*Ctx), "booltmp");
+            return Builder->CreateUIToFP(L, llvm::Type::getDoubleTy(*Ctx), "booltmp");
         default:
             return LogErrorV("Invalid binary operator.");
     }
 }
 
-Value *CallExprAST::codegen() {
+llvm::Value *ast::CallExprAST::codegen() {
     // Look up the name in the global module table.
-    Function *CalleeF = Mod->getFunction(Callee);
+    llvm::Function *CalleeF = Mod->getFunction(Callee);
     if (!CalleeF)
         return LogErrorV("Unknown function referenced");
 
@@ -40,7 +39,7 @@ Value *CallExprAST::codegen() {
     if (CalleeF->arg_size() != Args.size())
         return LogErrorV("Incorrect # arguments passed");
 
-    std::vector<Value *> ArgsV;
+    std::vector<llvm::Value *> ArgsV;
     for (unsigned i = 0, e = Args.size(); i != e; ++i) {
         ArgsV.push_back(Args[i]->codegen());
         if (!ArgsV.back())
@@ -50,14 +49,14 @@ Value *CallExprAST::codegen() {
     return Builder->CreateCall(CalleeF, ArgsV, "calltmp");
 }
 
-Function *PrototypeAST::codegen() {
+llvm::Function *ast::PrototypeAST::codegen() {
     // Make the function type:  double(double,double) etc.
-    std::vector<Type *> Doubles(Args.size(), Type::getDoubleTy(*Ctx));
-    FunctionType *FT =
-        FunctionType::get(Type::getDoubleTy(*Ctx), Doubles, false);
+    std::vector<llvm::Type *> Doubles(Args.size(), llvm::Type::getDoubleTy(*Ctx));
+    llvm::FunctionType *FT =
+        llvm::FunctionType::get(llvm::Type::getDoubleTy(*Ctx), Doubles, false);
 
-    Function *F =
-        Function::Create(FT, Function::ExternalLinkage, Name, Mod.get());
+    llvm::Function *F =
+        llvm::Function::Create(FT, llvm::Function::ExternalLinkage, Name, Mod.get());
 
     // Set names for all arguments.
     unsigned Idx = 0;
@@ -67,9 +66,9 @@ Function *PrototypeAST::codegen() {
     return F;
 }
 
-Function *FunctionAST::codegen() {
+llvm::Function *ast::FunctionAST::codegen() {
     // First, check for an existing function from a previous 'extern' declaration.
-    Function *Fn = Mod->getFunction(Proto->getName());
+    llvm::Function *Fn = Mod->getFunction(Proto->getName());
 
     if (!Fn)
         Fn = Proto->codegen();
@@ -78,7 +77,7 @@ Function *FunctionAST::codegen() {
         return nullptr;
 
     // Create a new basic block to start insertion into.
-    BasicBlock *BB = BasicBlock::Create(*Ctx, "entry", Fn);
+    llvm::BasicBlock *BB = llvm::BasicBlock::Create(*Ctx, "entry", Fn);
     Builder->SetInsertPoint(BB);
 
     // Record the function arguments in the NamedValues map.
@@ -86,7 +85,7 @@ Function *FunctionAST::codegen() {
     for (auto &Arg : Fn->args())
         NamedValues[std::string(Arg.getName())] = &Arg;
 
-    if (Value *RetVal = Body->codegen()) {
+    if (llvm::Value *RetVal = Body->codegen()) {
         // Finish off the function.
         Builder->CreateRet(RetVal);
 
@@ -105,8 +104,8 @@ Function *FunctionAST::codegen() {
 ///// JIT Driver
 /////
 
-static void initializeModule() {
-    Ctx = std::make_unique<LLVMContext>();
-    Mod = std::make_unique<Module>("jit", *Ctx);
-    Builder = std::make_unique<IRBuilder<>>(*Ctx);
+void initializeModule() {
+    Ctx = std::make_unique<llvm::LLVMContext>();
+    Mod = std::make_unique<llvm::Module>("jit", *Ctx);
+    Builder = std::make_unique<llvm::IRBuilder<>>(*Ctx);
 }

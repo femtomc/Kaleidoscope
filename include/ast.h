@@ -1,8 +1,22 @@
+#ifndef INCLUDE_AST_H
+#define INCLUDE_AST_H
+
 #include <string>
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
 #include <vector>
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
 
 namespace ast {
 
@@ -10,7 +24,7 @@ namespace ast {
     class ExprAST {
         public:
             virtual ~ExprAST() = default;
-            virtual Value *codegen() = 0;
+            virtual llvm::Value *codegen() = 0;
     };
 
     /// NumberExprAST - Expression class for numeric literals like "1.0".
@@ -19,7 +33,7 @@ namespace ast {
 
         public:
         NumberExprAST(double Val) : Val(Val) {}
-        virtual Value *codegen();
+        virtual llvm::Value *codegen();
     };
 
     /// VariableExprAST - Expression class for referencing a variable, like "a".
@@ -28,7 +42,7 @@ namespace ast {
 
         public:
         VariableExprAST(const std::string &Name) : Name(Name) {}
-        virtual Value *codegen();
+        virtual llvm::Value *codegen();
     };
 
     /// BinaryExprAST - Expression class for a binary operator.
@@ -40,7 +54,7 @@ namespace ast {
         BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS,
                 std::unique_ptr<ExprAST> RHS)
             : Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
-        virtual Value *codegen();
+        virtual llvm::Value *codegen();
     };
 
     /// CallExprAST - Expression class for function calls.
@@ -52,7 +66,7 @@ namespace ast {
         CallExprAST(const std::string &Callee,
                 std::vector<std::unique_ptr<ExprAST>> Args)
             : Callee(Callee), Args(std::move(Args)) {}
-        virtual Value *codegen();
+        virtual llvm::Value *codegen();
     };
 
     /// PrototypeAST - This class represents the "prototype" for a function,
@@ -67,7 +81,7 @@ namespace ast {
             : Name(Name), Args(std::move(Args)) {}
 
         const std::string &getName() const { return Name; }
-        virtual Value *codegen();
+        virtual llvm::Function *codegen();
     };
 
     /// FunctionAST - This class represents a function definition itself.
@@ -79,7 +93,9 @@ namespace ast {
         FunctionAST(std::unique_ptr<PrototypeAST> Proto,
                 std::unique_ptr<ExprAST> Body)
             : Proto(std::move(Proto)), Body(std::move(Body)) {}
-        virtual Value *codegen();
+        virtual llvm::Function *codegen();
     };
 
 } // end anonymous namespace
+
+#endif
